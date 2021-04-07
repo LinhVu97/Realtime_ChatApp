@@ -11,6 +11,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RegisterViewController" customModule="ChatApp" customModuleProvider="target">
             <connections>
                 <outlet property="emailText" destination="dIe-zU-5gF" id="Gwh-lv-We9"/>
+                <outlet property="image" destination="SLs-nu-Ddy" id="LcL-WM-8wY"/>
                 <outlet property="nameText" destination="tBa-Nv-31X" id="GyE-xb-LHO"/>
                 <outlet property="passText" destination="UWP-38-ynZ" id="xYV-OH-e9o"/>
                 <outlet property="registerButton" destination="Cuu-qf-Cwb" id="YV8-aK-Hii"/>
@@ -95,7 +96,7 @@
         </view>
     </objects>
     <resources>
-        <image name="profile-2" width="833.33331298828125" height="833.33331298828125"/>
+        <image name="profile-2" width="1250" height="1250"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

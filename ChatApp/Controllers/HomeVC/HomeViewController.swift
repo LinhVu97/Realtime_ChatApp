@@ -10,6 +10,7 @@ import Firebase
 
 class HomeViewController: UITableViewController {
     let auth = FirebaseAuth.Auth.auth()
+    let cellID = "cell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,15 +39,15 @@ class HomeViewController: UITableViewController {
         var ref: DatabaseReference!
         ref = FirebaseDatabase.Database.database().reference()
         ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            print(snapshot)
+
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 self.navigationItem.title = dictionary["name"] as? String
             }
-            
+
         }) { (error) in
             print(error.localizedDescription)
         }
+    
     }
     
     // MARK: Add New message
@@ -67,5 +68,21 @@ class HomeViewController: UITableViewController {
         let loginController = LoginViewController()
         loginController.modalPresentationStyle = .fullScreen
         present(loginController, animated: true, completion: nil)
+    }
+    
+    // MARK: Tableview Delegate and Datasource
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellID)
+        cell.textLabel?.text = "HOw"
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        print("Tap")
     }
 }

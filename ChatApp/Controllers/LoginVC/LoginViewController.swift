@@ -16,6 +16,8 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        dismissKeyboard()
+        
         emailText.delegate = self
         passText.delegate = self
     }
@@ -42,7 +44,11 @@ class LoginViewController: UIViewController {
                 return
             }
             
-            strongSelf.dismiss(animated: true, completion: nil)
+//            strongSelf.dismiss(animated: true, completion: nil)
+            let vc = HomeViewController()
+            let navi = UINavigationController(rootViewController: vc)
+            navi.modalPresentationStyle = .fullScreen
+            strongSelf.present(navi, animated: true, completion: nil)
         })
     }
     
@@ -65,7 +71,14 @@ class LoginViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    func dissmissKeyBoard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
     
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
 }
 
 extension LoginViewController: UITextFieldDelegate {
