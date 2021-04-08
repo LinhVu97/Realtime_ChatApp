@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C4661C14261EDC46007C184D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4661C13261EDC46007C184D /* Extensions.swift */; };
 		C47C4448261DEC620097A7C6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47C4447261DEC620097A7C6 /* User.swift */; };
 		C49CEFDA261B4893009426D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49CEFD9261B4893009426D7 /* AppDelegate.swift */; };
 		C49CEFDC261B4893009426D7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49CEFDB261B4893009426D7 /* SceneDelegate.swift */; };
@@ -30,6 +31,7 @@
 		19C9950C88F9175E0BDB88C2 /* Pods-ChatApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApp.debug.xcconfig"; path = "Target Support Files/Pods-ChatApp/Pods-ChatApp.debug.xcconfig"; sourceTree = "<group>"; };
 		8332CA5CA4698AEA71E48217 /* Pods_ChatApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0A28E8C967BDD3FB9AAA36F /* Pods-ChatApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApp.release.xcconfig"; path = "Target Support Files/Pods-ChatApp/Pods-ChatApp.release.xcconfig"; sourceTree = "<group>"; };
+		C4661C13261EDC46007C184D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C47C4447261DEC620097A7C6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		C49CEFD6261B4893009426D7 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C49CEFD9261B4893009426D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +81,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C4661C12261EDC3B007C184D /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				C4661C13261EDC46007C184D /* Extensions.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		C49CEFCD261B4892009426D7 = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +110,7 @@
 		C49CEFD8261B4893009426D7 /* ChatApp */ = {
 			isa = PBXGroup;
 			children = (
+				C4661C12261EDC3B007C184D /* Helpers */,
 				C4ECF704261C9489006C2C31 /* Models */,
 				C4ECF703261C9483006C2C31 /* Views */,
 				C49CEFF4261B4A3B009426D7 /* Controllers */,
@@ -313,6 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C4BE7FC5261B4DBD00CD405F /* LoginViewController.swift in Sources */,
+				C4661C14261EDC46007C184D /* Extensions.swift in Sources */,
 				C4C1C9BD261CB5F600D9C3B6 /* NewMessagesController.swift in Sources */,
 				C4BE7FD7261B559B00CD405F /* ForgotPassViewController.swift in Sources */,
 				C4BE7FCB261B4DD200CD405F /* RegisterViewController.swift in Sources */,

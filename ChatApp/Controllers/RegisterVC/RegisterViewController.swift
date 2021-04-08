@@ -85,6 +85,7 @@ class RegisterViewController: UIViewController {
             // MARK: Put image to Storage
             let imageName = NSUUID().uuidString
             let storageRef = Storage.storage().reference().child("ProfileImage").child("\(imageName).jpg")
+            
             if let uploadData = self?.image.image?.jpegData(compressionQuality: 0.1) {
                 storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                     if error != nil {
@@ -117,6 +118,9 @@ class RegisterViewController: UIViewController {
         }
     
         alert(title: "", message: "Success! Now you can login")
+        nameText.text = ""
+        emailText.text = ""
+        passText.text = ""
     }
     
     // MARK: Back

@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 
 class NewMessagesController: UITableViewController {
     let cellID = "cell"
@@ -55,18 +56,49 @@ class NewMessagesController: UITableViewController {
         let user = users[indexPath.row]
         cell.textLabel?.text = user.name
         cell.detailTextLabel?.text = user.email
+        
+        if let profileImageURL = user.profileImage {
+            cell.profileImage.loadImageUsingCache(profileImageURL: profileImageURL)
+        }
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
 }
 
 // MARK: User Cell
 class UserCell: UITableViewCell {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        textLabel?.frame = CGRect(x: 64, y: textLabel!.frame.origin.y, width: textLabel!.frame.width, height: textLabel!.frame.height)
+        detailTextLabel?.frame = CGRect(x: 64, y: detailTextLabel!.frame.origin.y, width: detailTextLabel!.frame.width, height: detailTextLabel!.frame.height)
+    }
+    
+    let profileImage: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 24
+        image.layer.masksToBounds = true
+        return image
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        
+        addSubview(profileImage)
+        
+        // Contraints
+        profileImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+        profileImage.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        profileImage.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        profileImage.heightAnchor.constraint(equalToConstant: 40).isActive = true
     }
     
     required init?(coder: NSCoder) {
