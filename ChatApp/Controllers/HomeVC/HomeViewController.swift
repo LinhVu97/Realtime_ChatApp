@@ -12,6 +12,8 @@ class HomeViewController: UITableViewController {
     let auth = FirebaseAuth.Auth.auth()
     let cellID = "cell"
     
+    var messages = [Messages]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,6 +21,8 @@ class HomeViewController: UITableViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "new_message_icon"), style: .plain, target: self, action: #selector(handleNewMessage))
         
         checkIfUserLoggedIn()
+        
+        observeMessages()
     }
     
     // MARK: Check user login
@@ -86,9 +90,16 @@ class HomeViewController: UITableViewController {
         self.navigationItem.titleView = titleView
     }
     
+    func showChatController(user: User) {
+        let chatLogController = ChatLogController()
+        chatLogController.user = user
+        navigationController?.pushViewController(chatLogController, animated: true)
+    }
+    
     // MARK: Add New message
     @objc func handleNewMessage() {
         let vc = NewMessagesController()
+        vc.messagesController = self // ??? Can hoi ly do
         let navController = UINavigationController(rootViewController: vc)
         present(navController, animated: true, completion: nil)
     }
@@ -107,17 +118,38 @@ class HomeViewController: UITableViewController {
     
     // MARK: Tableview Delegate and Datasource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 30
+        return messages.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellID)
-        cell.textLabel?.text = "HOw"
+        let message = messages[indexPath.row]
+        cell.textLabel?.text = message.text
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         print("Tap")
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    
+    // MARK: Observe Message
+    func observeMessages() {
+        let ref = Database.database().reference()
+        ref.child("message").observe(.childAdded, with: { snapshot in
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                let message = Messages()
+                message.setValuesForKeys(dictionary)
+                self.messages.append(message)
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        }, withCancel: nil)
     }
 }

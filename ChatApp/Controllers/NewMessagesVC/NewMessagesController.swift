@@ -13,6 +13,7 @@ class NewMessagesController: UITableViewController {
     let cellID = "cell"
     
     var users = [User]()
+    var messagesController: HomeViewController?
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +35,8 @@ class NewMessagesController: UITableViewController {
         Database.database().reference().child("users").observe( .childAdded, with: { (userdata) in
             if let dictionary = userdata.value as? [String: AnyObject] {
                 let user = User()
+                user.id = userdata.key
+                
                 user.setValuesForKeys(dictionary)
                 self.users.append(user)
                 
@@ -66,6 +69,11 @@ class NewMessagesController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+       
+        dismiss(animated: true, completion: {
+            let user = self.users[indexPath.row]
+            self.messagesController?.showChatController(user: user)
+        })
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

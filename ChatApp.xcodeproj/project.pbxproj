@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		C4661C14261EDC46007C184D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4661C13261EDC46007C184D /* Extensions.swift */; };
+		C4661C26261F00FF007C184D /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4661C24261F00FF007C184D /* ChatLogController.swift */; };
+		C4661C27261F00FF007C184D /* ChatLogController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C4661C25261F00FF007C184D /* ChatLogController.xib */; };
 		C47C4448261DEC620097A7C6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47C4447261DEC620097A7C6 /* User.swift */; };
+		C4866330261F4ECD004C7189 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = C486632F261F4ECD004C7189 /* Messages.swift */; };
 		C49CEFDA261B4893009426D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49CEFD9261B4893009426D7 /* AppDelegate.swift */; };
 		C49CEFDC261B4893009426D7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49CEFDB261B4893009426D7 /* SceneDelegate.swift */; };
 		C49CEFE3261B4894009426D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C49CEFE2261B4894009426D7 /* Assets.xcassets */; };
@@ -32,7 +35,10 @@
 		8332CA5CA4698AEA71E48217 /* Pods_ChatApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0A28E8C967BDD3FB9AAA36F /* Pods-ChatApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApp.release.xcconfig"; path = "Target Support Files/Pods-ChatApp/Pods-ChatApp.release.xcconfig"; sourceTree = "<group>"; };
 		C4661C13261EDC46007C184D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		C4661C24261F00FF007C184D /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
+		C4661C25261F00FF007C184D /* ChatLogController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatLogController.xib; sourceTree = "<group>"; };
 		C47C4447261DEC620097A7C6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		C486632F261F4ECD004C7189 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
 		C49CEFD6261B4893009426D7 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C49CEFD9261B4893009426D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C49CEFDB261B4893009426D7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -89,6 +95,15 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		C4661C1D261EFB1C007C184D /* ChatLogVC */ = {
+			isa = PBXGroup;
+			children = (
+				C4661C24261F00FF007C184D /* ChatLogController.swift */,
+				C4661C25261F00FF007C184D /* ChatLogController.xib */,
+			);
+			path = ChatLogVC;
+			sourceTree = "<group>";
+		};
 		C49CEFCD261B4892009426D7 = {
 			isa = PBXGroup;
 			children = (
@@ -126,6 +141,7 @@
 		C49CEFF4261B4A3B009426D7 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C4661C1D261EFB1C007C184D /* ChatLogVC */,
 				C4BE7FC0261B4D7D00CD405F /* HomeVC */,
 				C4BE7FC1261B4D8600CD405F /* LoginVC */,
 				C4BE7FC2261B4D9A00CD405F /* RegisterVC */,
@@ -191,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				C47C4447261DEC620097A7C6 /* User.swift */,
+				C486632F261F4ECD004C7189 /* Messages.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -268,6 +285,7 @@
 				C4BE7FC6261B4DBD00CD405F /* LoginViewController.xib in Resources */,
 				C4BE7FCC261B4DD200CD405F /* RegisterViewController.xib in Resources */,
 				C49CEFE6261B4894009426D7 /* LaunchScreen.storyboard in Resources */,
+				C4661C27261F00FF007C184D /* ChatLogController.xib in Resources */,
 				C49CEFE3261B4894009426D7 /* Assets.xcassets in Resources */,
 				C4BE7FDC261B560000CD405F /* GoogleService-Info.plist in Resources */,
 				C4C1C9C5261CB96F00D9C3B6 /* HomeViewController.xib in Resources */,
@@ -323,11 +341,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4661C26261F00FF007C184D /* ChatLogController.swift in Sources */,
 				C4BE7FC5261B4DBD00CD405F /* LoginViewController.swift in Sources */,
 				C4661C14261EDC46007C184D /* Extensions.swift in Sources */,
 				C4C1C9BD261CB5F600D9C3B6 /* NewMessagesController.swift in Sources */,
 				C4BE7FD7261B559B00CD405F /* ForgotPassViewController.swift in Sources */,
 				C4BE7FCB261B4DD200CD405F /* RegisterViewController.swift in Sources */,
+				C4866330261F4ECD004C7189 /* Messages.swift in Sources */,
 				C47C4448261DEC620097A7C6 /* User.swift in Sources */,
 				C49CEFDA261B4893009426D7 /* AppDelegate.swift in Sources */,
 				C4C1C9C4261CB96F00D9C3B6 /* HomeViewController.swift in Sources */,
