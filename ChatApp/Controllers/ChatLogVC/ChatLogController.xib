@@ -10,6 +10,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatLogController" customModule="ChatApp" customModuleProvider="target">
             <connections>
+                <outlet property="chatLogCollection" destination="a3Y-Qd-IAP" id="LcQ-98-gte"/>
                 <outlet property="textFieldMess" destination="UpQ-TS-3vo" id="HyD-uV-AJ1"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -48,13 +49,27 @@
                         <constraint firstAttribute="bottom" secondItem="6Hb-WN-SZ5" secondAttribute="bottom" constant="23" id="tMk-Cc-AZT"/>
                     </constraints>
                 </view>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="a3Y-Qd-IAP">
+                    <rect key="frame" x="0.0" y="44" width="414" height="737"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Ii3-7t-R9F">
+                        <size key="itemSize" width="128" height="128"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                </collectionView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
+                <constraint firstItem="a3Y-Qd-IAP" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="28i-b0-9VW"/>
+                <constraint firstItem="iSh-MP-HR3" firstAttribute="top" secondItem="a3Y-Qd-IAP" secondAttribute="bottom" id="Jtu-wc-OXd"/>
                 <constraint firstItem="iSh-MP-HR3" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="TW7-lG-Uty"/>
                 <constraint firstItem="iSh-MP-HR3" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="flA-IL-7Vy"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="iSh-MP-HR3" secondAttribute="trailing" id="hHz-Mq-dS8"/>
+                <constraint firstItem="a3Y-Qd-IAP" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="iR3-Xi-iq0"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="a3Y-Qd-IAP" secondAttribute="trailing" id="ixg-jN-4nK"/>
             </constraints>
             <point key="canvasLocation" x="-201.44927536231884" y="56.919642857142854"/>
         </view>
