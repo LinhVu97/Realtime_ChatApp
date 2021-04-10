@@ -31,6 +31,10 @@ class ChatLogController: UIViewController {
         textFieldMess.delegate = self
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        chatLogCollection.collectionViewLayout.invalidateLayout()
+    }
+    
     @IBAction func sendMessage(_ sender: UIButton) {
         let ref = Database.database().reference().child("message")
         let childRef = ref.childByAutoId()
@@ -126,10 +130,50 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
         
         let message = messages[indexPath.item]
         cell.textView.text = message.text
+        
+        setupCell(cell: cell, message: message)
+        
+        // let's modify bubbleView
+        cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: message.text!).width + 32
         return cell
     }
     
-    override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
-        return CGSize(width: view.frame.width, height: 80)
+    private func setupCell(cell: ChatMessageCell, message: Messages) {
+        if let image = self.user?.profileImage {
+            cell.profileImage.loadImageUsingCache(profileImageURL: image)
+        }
+        
+        if message.fromID == Auth.auth().currentUser?.uid {
+            // Blue bubble
+            cell.bubbleView.backgroundColor = .blue
+            cell.bubbleRightAnchor?.isActive = true
+            cell.bubbleLeftAnchor?.isActive = false
+            cell.profileImage.isHidden = true
+        } else {
+            // Gray bubble
+            cell.bubbleView.backgroundColor = .lightGray
+            cell.textView.textColor = .white
+            
+            cell.profileImage.isHidden = false
+            cell.bubbleRightAnchor?.isActive = false
+            cell.bubbleLeftAnchor?.isActive = true
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        var height: CGFloat = 80
+        
+        if let text = messages[indexPath.item].text {
+            height = estimateFrameForText(text: text).height + 20
+        }
+        
+        return CGSize(width: view.frame.width, height: height)
+    }
+    
+    private func estimateFrameForText(text : String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)], context: nil)
     }
 }

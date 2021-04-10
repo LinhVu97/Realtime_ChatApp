@@ -135,7 +135,6 @@ class HomeViewController: UITableViewController {
         let message = messages[indexPath.row]
         cell.message = message
         
-    
         return cell
     }
     
@@ -182,8 +181,8 @@ class HomeViewController: UITableViewController {
                     message.setValuesForKeys(dictionary)
                     self.messages.append(message)
                     
-                    if let toID = message.toID {
-                        self.dictionaryMessage[toID] = message
+                    if let chatPartnerID = message.chatPartnerid() {
+                        self.dictionaryMessage[chatPartnerID] = message
                         
                         self.messages = Array(self.dictionaryMessage.values)
                     }

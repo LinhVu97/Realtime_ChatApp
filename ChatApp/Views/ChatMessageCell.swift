@@ -32,7 +32,7 @@ class ChatMessageCell: UICollectionViewCell {
 
     let profileImage : UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Chat.png")
+        imageView.image = UIImage(named: "profile")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 16
         imageView.layer.masksToBounds = true
@@ -49,28 +49,28 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(bubbleView)
         addSubview(textView)
         addSubview(profileImage)
-        
+
+        // Image view
         profileImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         profileImage.widthAnchor.constraint(equalToConstant: 32).isActive = true
         profileImage.heightAnchor.constraint(equalToConstant: 32).isActive = true
-
-        bubbleRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 235)
+        
+        // Bubble View
+        bubbleRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
         bubbleRightAnchor?.isActive = true
-
-
-        bubbleLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImage.rightAnchor, constant: 8)
-
+        
+        bubbleLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImage.rightAnchor, constant: 10)
+//        bubbleLeftAnchor?.isActive = true
+        
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-
-
-        bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 220)
+        
+        bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
+        
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
-        
-        
-//                textView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        // Text view
         textView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor, constant: 8).isActive = true
         textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         textView.widthAnchor.constraint(equalToConstant: 200).isActive = true
