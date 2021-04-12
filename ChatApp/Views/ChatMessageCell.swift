@@ -32,7 +32,6 @@ class ChatMessageCell: UICollectionViewCell {
 
     let profileImage : UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "profile")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 16
         imageView.layer.masksToBounds = true

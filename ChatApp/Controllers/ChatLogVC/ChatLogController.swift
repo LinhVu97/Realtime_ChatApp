@@ -11,6 +11,9 @@ import Firebase
 class ChatLogController: UIViewController {
     @IBOutlet weak var textFieldMess: UITextField!
     @IBOutlet weak var chatLogCollection: UICollectionView!
+    @IBOutlet weak var bottomView: UIView!
+    
+    var bottomConstraint: NSLayoutConstraint?
     
     let cellID = "cell"
     
@@ -21,6 +24,8 @@ class ChatLogController: UIViewController {
             navigationItem.title = user?.name
             
             observeMessage()
+            
+            setupKeyboardObserve()
         }
     }
     
@@ -29,6 +34,16 @@ class ChatLogController: UIViewController {
         
         setUpCollectionView()
         textFieldMess.delegate = self
+        dissmissKeyBoard()
+        
+        bottomConstraint = NSLayoutConstraint(item: bottomView!, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: 0)
+        view.addConstraint(bottomConstraint!)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -52,14 +67,14 @@ class ChatLogController: UIViewController {
             }
             
             // Create data user message
-            let userMessage = Database.database().reference().child("user-messages").child(fromID!)
+            let userMessage = Database.database().reference().child("user-messages").child(fromID!).child(toID)
             guard let messageID = childRef.key else {
                 return
             }
             userMessage.updateChildValues([messageID: 1])
             
             // Recipient
-            let recipientUserMessageRef = Database.database().reference().child("user-messages").child(toID)
+            let recipientUserMessageRef = Database.database().reference().child("user-messages").child(toID).child(fromID!)
             recipientUserMessageRef.updateChildValues([messageID: 1])
         })
         
@@ -67,11 +82,11 @@ class ChatLogController: UIViewController {
     }
     
     func observeMessage() {
-        guard let uid = Auth.auth().currentUser?.uid else {
+        guard let uid = Auth.auth().currentUser?.uid, let toID = user?.id else {
             return
         }
         
-        let userMessageRef = Database.database().reference().child("user-messages").child(uid)
+        let userMessageRef = Database.database().reference().child("user-messages").child(uid).child(toID)
         userMessageRef.observe(.childAdded, with: { snapshot in
             
             let messgeId = snapshot.key
@@ -107,8 +122,8 @@ class ChatLogController: UIViewController {
         chatLogCollection.alwaysBounceVertical = true
         chatLogCollection.backgroundColor = .white
         chatLogCollection.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
-//        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-//        chatLogCollection.addGestureRecognizer(tap)
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        chatLogCollection.addGestureRecognizer(tap)
     }
 }
 
@@ -175,5 +190,40 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         
         return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)], context: nil)
+    }
+    
+    // MARK: Setup Keyboard
+    func setupKeyboardObserve() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardShow), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func handleKeyboardShow(notification: Notification) {
+        guard let userInfo = notification.userInfo else { return }
+        
+        guard let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {return}
+        
+        let keyboardFrame = keyboardSize.cgRectValue
+        
+        let isKeyBoardShowing = notification.name == UIResponder.keyboardWillShowNotification
+        
+        bottomConstraint?.constant = isKeyBoardShowing ? -keyboardFrame.height: 0
+
+        UIView.animate(withDuration: 0, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+        }) { (completed) in
+            self.chatLogCollection.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: true)
+        }
+    }
+    
+    // MARK: Dismiss keyboard
+    func dissmissKeyBoard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+      
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

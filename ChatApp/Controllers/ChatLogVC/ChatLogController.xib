@@ -10,6 +10,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatLogController" customModule="ChatApp" customModuleProvider="target">
             <connections>
+                <outlet property="bottomView" destination="iSh-MP-HR3" id="4FB-dR-eDf"/>
                 <outlet property="chatLogCollection" destination="a3Y-Qd-IAP" id="LcQ-98-gte"/>
                 <outlet property="textFieldMess" destination="UpQ-TS-3vo" id="HyD-uV-AJ1"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>

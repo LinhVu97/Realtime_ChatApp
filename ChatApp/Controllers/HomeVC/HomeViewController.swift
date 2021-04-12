@@ -173,23 +173,26 @@ class HomeViewController: UITableViewController {
         
         let ref = Database.database().reference().child("user-messages").child(uid)
         ref.observe(.childAdded, with: { snapshot in
-            let messageId = snapshot.key
-            let messageReference = Database.database().reference().child("message").child(messageId)
-            messageReference.observeSingleEvent(of: .value, with: { snapshot1 in
-                if let dictionary = snapshot1.value as? [String: AnyObject] {
-                    let message = Messages()
-                    message.setValuesForKeys(dictionary)
-                    self.messages.append(message)
-                    
-                    if let chatPartnerID = message.chatPartnerid() {
-                        self.dictionaryMessage[chatPartnerID] = message
+            let userID = snapshot.key
+            Database.database().reference().child("user-messages").child(uid).child(userID).observe(.childAdded, with: { snapshot in
+                let messageId = snapshot.key
+                let messageReference = Database.database().reference().child("message").child(messageId)
+                messageReference.observeSingleEvent(of: .value, with: { snapshot1 in
+                    if let dictionary = snapshot1.value as? [String: AnyObject] {
+                        let message = Messages()
+                        message.setValuesForKeys(dictionary)
+                        self.messages.append(message)
                         
-                        self.messages = Array(self.dictionaryMessage.values)
+                        if let chatPartnerID = message.chatPartnerid() {
+                            self.dictionaryMessage[chatPartnerID] = message
+                            
+                            self.messages = Array(self.dictionaryMessage.values)
+                        }
+                        self.timer?.invalidate()
+                        self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
                     }
-                    self.timer?.invalidate()
-                    self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
-                }
-            }, withCancel: nil)
+                }, withCancel: nil)
+            })
         }, withCancel: nil)
     }
     
