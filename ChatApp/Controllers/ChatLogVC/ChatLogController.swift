@@ -7,11 +7,13 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 
 class ChatLogController: UIViewController {
     @IBOutlet weak var textFieldMess: UITextField!
     @IBOutlet weak var chatLogCollection: UICollectionView!
     @IBOutlet weak var bottomView: UIView!
+    @IBOutlet weak var sendImage: UIImageView!
     
     var bottomConstraint: NSLayoutConstraint?
     
@@ -38,6 +40,10 @@ class ChatLogController: UIViewController {
         
         bottomConstraint = NSLayoutConstraint(item: bottomView!, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: 0)
         view.addConstraint(bottomConstraint!)
+        
+        sendImage.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleUploadImage))
+        sendImage.addGestureRecognizer(tap)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -51,34 +57,37 @@ class ChatLogController: UIViewController {
     }
     
     @IBAction func sendMessage(_ sender: UIButton) {
-        let ref = Database.database().reference().child("message")
-        let childRef = ref.childByAutoId()
-        let toID = user!.id!
-        let fromID = Auth.auth().currentUser?.uid
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "hh:mm a"  //"MM-dd-yyyy HH:mm"
-        let timestamp = dateFormatter.string(from: NSDate() as Date)
-        let values = ["text": textFieldMess.text!,"fromID": fromID as Any, "toID": toID, "timestamp": timestamp] as [String : Any]
+        if textFieldMess.text!.isEmpty {
+        } else {
+            let ref = Database.database().reference().child("message")
+            let childRef = ref.childByAutoId()
+            let toID = user!.id!
+            let fromID = Auth.auth().currentUser?.uid
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hh:mm a"  //"MM-dd-yyyy HH:mm"
+            let timestamp = dateFormatter.string(from: NSDate() as Date)
+            let values = ["text": textFieldMess.text!,"fromID": fromID as Any, "toID": toID, "timestamp": timestamp] as [String : Any]
 
-        childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
-            if error != nil {
-                print(error)
-                return
-            }
+            childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
+                if error != nil {
+                    print(error)
+                    return
+                }
+                
+                // Create data user message
+                let userMessage = Database.database().reference().child("user-messages").child(fromID!).child(toID)
+                guard let messageID = childRef.key else {
+                    return
+                }
+                userMessage.updateChildValues([messageID: 1])
+                
+                // Recipient
+                let recipientUserMessageRef = Database.database().reference().child("user-messages").child(toID).child(fromID!)
+                recipientUserMessageRef.updateChildValues([messageID: 1])
+            })
             
-            // Create data user message
-            let userMessage = Database.database().reference().child("user-messages").child(fromID!).child(toID)
-            guard let messageID = childRef.key else {
-                return
-            }
-            userMessage.updateChildValues([messageID: 1])
-            
-            // Recipient
-            let recipientUserMessageRef = Database.database().reference().child("user-messages").child(toID).child(fromID!)
-            recipientUserMessageRef.updateChildValues([messageID: 1])
-        })
-        
-        textFieldMess.text = ""
+            textFieldMess.text = ""
+        }
     }
     
     func observeMessage() {
@@ -97,6 +106,7 @@ class ChatLogController: UIViewController {
                     return
                 }
                 let message = Messages()
+                message.imageUrl = dictionary["imageUrl"] as? String
                 message.setValuesForKeys(dictionary)
                 
                 if message.chatPartnerid() == self.user?.id {
@@ -127,7 +137,7 @@ class ChatLogController: UIViewController {
     }
 }
 
-extension ChatLogController: UITextFieldDelegate {
+extension ChatLogController: UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -149,13 +159,23 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
         setupCell(cell: cell, message: message)
         
         // let's modify bubbleView
-        cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: message.text!).width + 32
+        if let text = message.text {
+            cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: text).width + 32
+        }
         return cell
     }
     
     private func setupCell(cell: ChatMessageCell, message: Messages) {
         if let image = self.user?.profileImage {
             cell.profileImage.loadImageUsingCache(profileImageURL: image)
+        }
+        
+        if let messageImage = message.imageUrl {
+            cell.messageImageView.loadImageUsingCache(profileImageURL: messageImage)
+            cell.messageImageView.isHidden = false
+            cell.bubbleView.backgroundColor = .clear
+        } else {
+            cell.messageImageView.isHidden = true
         }
         
         if message.fromID == Auth.auth().currentUser?.uid {
@@ -168,7 +188,6 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
             // Gray bubble
             cell.bubbleView.backgroundColor = .lightGray
             cell.textView.textColor = .white
-            
             cell.profileImage.isHidden = false
             cell.bubbleRightAnchor?.isActive = false
             cell.bubbleLeftAnchor?.isActive = true
@@ -225,5 +244,87 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
       
     @objc func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    // MARK: Upload image
+    @objc func handleUploadImage() {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.allowsEditing = true
+        present(imagePickerController, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        var selectedImageFromLibrary: UIImage?
+        
+        if let editedImage = info[.editedImage] as? UIImage {
+            selectedImageFromLibrary = editedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            selectedImageFromLibrary = originalImage
+        }
+        
+        if let selectedImage = selectedImageFromLibrary {
+            sendImage.image = selectedImage
+            uploadToFirebaseStorageUsingImage(image: selectedImage)
+            sendImage.image = UIImage(systemName: "photo.fill")
+        }
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    private func uploadToFirebaseStorageUsingImage(image: UIImage) {
+        let imageName = UUID().uuidString
+        let ref = Storage.storage().reference().child("MessageImage").child(imageName)
+        
+        if let uploadData = self.sendImage.image?.jpegData(compressionQuality: 0.2) {
+            ref.putData(uploadData, metadata: nil) { (metadata, error) in
+                if error != nil {
+                    return
+                }
+                
+                ref.downloadURL(completion: { (url, error) in
+                    guard let downloadURL = url else {
+                        return
+                    }
+                    
+                    let image = downloadURL.absoluteString
+                    self.sendMessageWithImageURL(imageURL: image)
+                })
+            }
+        }
+    }
+    
+    private func sendMessageWithImageURL(imageURL: String) {
+        let ref = Database.database().reference().child("message")
+        let childRef = ref.childByAutoId()
+        let toID = user!.id!
+        let fromID = Auth.auth().currentUser?.uid
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "hh:mm a"  //"MM-dd-yyyy HH:mm"
+        let timestamp = dateFormatter.string(from: NSDate() as Date)
+        let values = ["imageUrl": imageURL,"fromID": fromID as Any, "toID": toID, "timestamp": timestamp] as [String : Any]
+
+        childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
+            if error != nil {
+                print(error)
+                return
+            }
+            
+            // Create data user message
+            let userMessage = Database.database().reference().child("user-messages").child(fromID!).child(toID)
+            guard let messageID = childRef.key else {
+                return
+            }
+            userMessage.updateChildValues([messageID: 1])
+            
+            // Recipient
+            let recipientUserMessageRef = Database.database().reference().child("user-messages").child(toID).child(fromID!)
+            recipientUserMessageRef.updateChildValues([messageID: 1])
+        })
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 }

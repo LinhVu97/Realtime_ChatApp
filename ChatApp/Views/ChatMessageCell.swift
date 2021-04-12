@@ -38,6 +38,15 @@ class ChatMessageCell: UICollectionViewCell {
         imageView.contentMode = .scaleToFill
         return imageView
     }()
+    
+    let messageImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 16
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleToFill
+        return imageView
+    }()
 
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleRightAnchor: NSLayoutConstraint?
@@ -48,6 +57,7 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(bubbleView)
         addSubview(textView)
         addSubview(profileImage)
+        bubbleView.addSubview(messageImageView)
 
         // Image view
         profileImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
@@ -60,7 +70,6 @@ class ChatMessageCell: UICollectionViewCell {
         bubbleRightAnchor?.isActive = true
         
         bubbleLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImage.rightAnchor, constant: 10)
-//        bubbleLeftAnchor?.isActive = true
         
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         
@@ -76,6 +85,12 @@ class ChatMessageCell: UICollectionViewCell {
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         textView.isEditable = false
         textView.isScrollEnabled = false
+        
+        // Message Image View
+        messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
+        messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
+        messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
+        messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
     }
     
     required init?(coder: NSCoder) {

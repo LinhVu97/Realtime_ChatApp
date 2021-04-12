@@ -14,7 +14,11 @@ class UserCell: UITableViewCell {
         didSet {
             setupNameAndAvatar()
             
-            detailTextLabel?.text = message?.text
+            if message?.text == nil {
+                detailTextLabel?.text = "Sent a photo"
+            } else {
+                detailTextLabel?.text = message?.text
+            }
             
             timeLabel.text = message?.timestamp
         }
