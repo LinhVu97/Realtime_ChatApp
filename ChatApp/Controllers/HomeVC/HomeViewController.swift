@@ -196,6 +196,11 @@ class HomeViewController: UITableViewController {
                 }, withCancel: nil)
             })
         }, withCancel: nil)
+        
+        ref.observe(.childRemoved) { (snapshot) in
+            self.dictionaryMessage.removeValue(forKey: snapshot.key)
+            self.handleReloadTable()
+        }
     }
     
     @objc func handleReloadTable() {
@@ -204,5 +209,30 @@ class HomeViewController: UITableViewController {
         }
     }
     
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
     
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let message = messages[indexPath.row]
+        
+        if let chatPartnerID = message.chatPartnerid() {
+            Database.database().reference().child("user-messages").child(uid).child(chatPartnerID).removeValue { (error, ref) in
+                if error != nil {
+                    return
+                }
+                
+                self.dictionaryMessage.removeValue(forKey: chatPartnerID)
+                self.handleReloadTable()
+                
+                self.messages.remove(at: indexPath.row)
+                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+        }
+        
+    }
 }
