@@ -25,6 +25,8 @@ class HomeViewController: UITableViewController {
         tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
         
         checkIfUserLoggedIn()
+        
+        tableView.allowsMultipleSelectionDuringEditing = true
     }
     
     // MARK: Check user login
@@ -201,4 +203,6 @@ class HomeViewController: UITableViewController {
             self.tableView.reloadData()
         }
     }
+    
+    
 }

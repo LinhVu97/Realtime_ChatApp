@@ -116,7 +116,6 @@ class ChatLogController: UIViewController {
                 
                 DispatchQueue.main.async {
                     self.chatLogCollection.reloadData()
-                    print(self.messages)
                     self.chatLogCollection.scrollToItem(at: IndexPath(item: self.messages.count - 1, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
                 }
             }, withCancel: nil)
@@ -161,7 +160,10 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
         // let's modify bubbleView
         if let text = message.text {
             cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: text).width + 32
+        } else if message.imageUrl != nil {
+            cell.bubbleWidthAnchor?.constant = 200
         }
+        
         return cell
     }
     
@@ -197,8 +199,13 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height: CGFloat = 80
         
-        if let text = messages[indexPath.item].text {
+        let message = messages[indexPath.item]
+        if let text = message.text {
             height = estimateFrameForText(text: text).height + 20
+        } else if let imageWidth = message.imageWidth?.floatValue, let imageHeight = message.imageHeight?.floatValue {
+            
+            height = CGFloat(imageHeight / imageWidth * 200)
+            
         }
         
         return CGSize(width: view.frame.width, height: height)
@@ -288,14 +295,14 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
                         return
                     }
                     
-                    let image = downloadURL.absoluteString
-                    self.sendMessageWithImageURL(imageURL: image)
+                    let imageUrl = downloadURL.absoluteString
+                    self.sendMessageWithImageURL(imageURL: imageUrl, image: image)
                 })
             }
         }
     }
     
-    private func sendMessageWithImageURL(imageURL: String) {
+    private func sendMessageWithImageURL(imageURL: String, image: UIImage) {
         let ref = Database.database().reference().child("message")
         let childRef = ref.childByAutoId()
         let toID = user!.id!
@@ -303,7 +310,7 @@ extension ChatLogController: UICollectionViewDataSource, UICollectionViewDelegat
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm a"  //"MM-dd-yyyy HH:mm"
         let timestamp = dateFormatter.string(from: NSDate() as Date)
-        let values = ["imageUrl": imageURL,"fromID": fromID as Any, "toID": toID, "timestamp": timestamp] as [String : Any]
+        let values = ["fromID": fromID as Any, "toID": toID, "timestamp": timestamp, "imageUrl": imageURL, "imageWidth": image.size.width, "imageHeight": image.size.height] as [String : Any]
 
         childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
             if error != nil {
